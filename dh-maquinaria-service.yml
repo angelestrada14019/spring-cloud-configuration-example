@@ -1,5 +1,5 @@
 server:
   port: ${PORT:8889}
-max_login_fail: 3
-domain_mail_enabled: Outlook, Gmail, Digitalhouse
+url_dnrpa: https://www.dnrpa.gov.ar/portal_dnrpa
+catalogo_maquina_maximo: 650
 message: general configuration maquinaria service!
