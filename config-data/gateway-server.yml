@@ -23,7 +23,7 @@ eureka:
         - id: car-service
           uri: lb://car-service
           predicates:
-            - Path=/cars/**
+            - Path=/car/**
         - id: bike-service
           uri: lb://bike-service
           predicates:
