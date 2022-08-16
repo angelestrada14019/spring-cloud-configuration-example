@@ -9,6 +9,8 @@ eureka:
  
  spring:
   cloud:
+    discovery:
+      enabled: true
     gateway:
       discovery:
         locator:
@@ -19,7 +21,7 @@ eureka:
           predicates:
             - Path=/user/**
         - id: car-service
-          uri: lb://cat-service
+          uri: lb://car-service
           predicates:
             - Path=/cars/**
         - id: bike-service
