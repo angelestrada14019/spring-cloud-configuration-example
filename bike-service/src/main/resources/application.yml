@@ -1,0 +1,25 @@
+#server:
+#  port: 8003
+spring:
+  application:
+    name: bike-service
+  config:
+    import: optional:configserver:${CONFIG_SERVER:http://localhost:8888}
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    show-sql: true
+#  datasource:
+#    username: root
+#    password: 02102910
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#  sql:
+#    init:
+#      platform: h2
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
