@@ -10,6 +10,7 @@ eureka:
 spring:
   cloud:
     gateway:
+      default-filters: LoggingGatewayFilterFactory
       discovery:
         locator:
           enabled: true
@@ -18,11 +19,17 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/user/**
+          filters:
+            - AddHeader=custom-user-header,custom-user-header-value
         - id: car-service
           uri: lb://car-service
           predicates:
             - Path=/car/**
+          filters:
+              - AddHeader=custom-car-header,custom-car-header-value
         - id: bike-service
           uri: lb://bike-service
           predicates:
             - Path=/bike/**
+          filters:
+              - AddHeader=custom-bike-header,custom-bike-header-value
