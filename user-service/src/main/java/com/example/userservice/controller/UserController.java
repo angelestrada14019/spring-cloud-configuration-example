@@ -5,7 +5,9 @@ import com.example.userservice.entity.User;
 import com.example.userservice.model.Bike;
 import com.example.userservice.model.Car;
 import com.example.userservice.service.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,14 +36,6 @@ public class UserController {
         }
         return ResponseEntity.ok(user);
     }
-    @GetMapping("/userAll/{id}")
-    public ResponseEntity<UserDto> getUserDto(@PathVariable Long id) {
-        UserDto userDto = userService.getUserDto(id);
-        if (userDto == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(userDto);
-    }
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
@@ -49,6 +43,7 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
     @GetMapping("{id}/car")
+    @CircuitBreaker(name = "carsCB", fallbackMethod = "fallbackGetCars")
     public ResponseEntity<List<Car>> getCars(@PathVariable Long id){
         User user = userService.getUser(id);
         if (user == null) {
@@ -60,7 +55,28 @@ public class UserController {
         }
         return ResponseEntity.ok(cars);
     }
+    private ResponseEntity<List<Car>> fallbackGetCars(@PathVariable Long id,RuntimeException e){
+        return new ResponseEntity("El usuario " + id + ", no tiene los carros" +
+                " disponibles en este momento",
+                HttpStatus.OK);
+    }
+    @PostMapping("{id}/saveCar")
+    @CircuitBreaker(name = "carsCB", fallbackMethod = "fallbackSaveCars")
+    public ResponseEntity<Car> saveCar(@PathVariable Long id, @RequestBody Car car){
+        User user = userService.getUser(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Car newCar = userService.saveCar(id, car);
+        return ResponseEntity.ok(newCar);
+    }
+    private ResponseEntity<Car> fallbackSaveCars(@PathVariable Long id, @RequestBody Car car,RuntimeException e){
+        return new ResponseEntity("El usuario " + id + ", no puede guardar" +
+                " carros en este momento",
+                HttpStatus.OK);
+    }
     @GetMapping("{id}/bike")
+    @CircuitBreaker(name = "bikesCB", fallbackMethod = "fallbackGetbikes")
     public ResponseEntity<List<Bike>> getBikes(@PathVariable Long id){
         User user = userService.getUser(id);
         if (user == null) {
@@ -72,17 +88,13 @@ public class UserController {
         }
         return ResponseEntity.ok(bikes);
     }
-
-    @PostMapping("{id}/saveCar")
-    public ResponseEntity<Car> saveCar(@PathVariable Long id, @RequestBody Car car){
-        User user = userService.getUser(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        Car newCar = userService.saveCar(id, car);
-        return ResponseEntity.ok(newCar);
+    private ResponseEntity<List<Bike>> fallbackGetbikes(@PathVariable Long id,RuntimeException e){
+        return new ResponseEntity("El usuario " + id + ", no tiene las motos" +
+                " disponibles en este momento",
+                HttpStatus.OK);
     }
     @PostMapping("{id}/saveBike")
+    @CircuitBreaker(name = "bikesCB", fallbackMethod = "fallbackSaveBikes")
     public ResponseEntity<Bike> saveBike(@PathVariable Long id, @RequestBody Bike bike){
         User user = userService.getUser(id);
         if (user == null) {
@@ -90,6 +102,25 @@ public class UserController {
         }
         Bike newBike = userService.saveBike(id, bike);
         return ResponseEntity.ok(newBike);
+    }
+    private ResponseEntity<Bike> fallbackSaveBikes(@PathVariable Long id, @RequestBody Bike bike,RuntimeException e){
+        return new ResponseEntity("El usuario " + id + ", no puede guardar" +
+                " motos en este momento",
+                HttpStatus.OK);
+    }
+    @GetMapping("/userAll/{id}")
+    @CircuitBreaker(name = "allCB", fallbackMethod = "fallbackGetAll")
+    public ResponseEntity<UserDto> getUserDto(@PathVariable Long id) {
+        UserDto userDto = userService.getUserDto(id);
+        if (userDto == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userDto);
+    }
+    private ResponseEntity<UserDto> fallbackGetAll(@PathVariable Long id,RuntimeException e){
+        return new ResponseEntity("El usuario " + id + ", no tiene los carros ni las motos" +
+                " disponibles en este momento",
+                HttpStatus.OK);
     }
 
 }
