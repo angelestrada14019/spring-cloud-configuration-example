@@ -6,6 +6,7 @@ import com.example.userservice.model.Bike;
 import com.example.userservice.model.Car;
 import com.example.userservice.service.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,7 @@ public class UserController {
     }
     @GetMapping("{id}/car")
     @CircuitBreaker(name = "carsCB", fallbackMethod = "fallbackGetCars")
+    @Retry(name = "carsCB")
     public ResponseEntity<List<Car>> getCars(@PathVariable Long id){
         User user = userService.getUser(id);
         if (user == null) {
@@ -62,6 +64,7 @@ public class UserController {
     }
     @PostMapping("{id}/saveCar")
     @CircuitBreaker(name = "carsCB", fallbackMethod = "fallbackSaveCars")
+    @Retry(name = "carsCB")
     public ResponseEntity<Car> saveCar(@PathVariable Long id, @RequestBody Car car){
         User user = userService.getUser(id);
         if (user == null) {
@@ -76,6 +79,7 @@ public class UserController {
                 HttpStatus.OK);
     }
     @GetMapping("{id}/bike")
+    @Retry(name = "bikesCB")
     @CircuitBreaker(name = "bikesCB", fallbackMethod = "fallbackGetbikes")
     public ResponseEntity<List<Bike>> getBikes(@PathVariable Long id){
         User user = userService.getUser(id);
@@ -94,6 +98,7 @@ public class UserController {
                 HttpStatus.OK);
     }
     @PostMapping("{id}/saveBike")
+    @Retry(name = "bikesCB")
     @CircuitBreaker(name = "bikesCB", fallbackMethod = "fallbackSaveBikes")
     public ResponseEntity<Bike> saveBike(@PathVariable Long id, @RequestBody Bike bike){
         User user = userService.getUser(id);
@@ -110,6 +115,7 @@ public class UserController {
     }
     @GetMapping("/userAll/{id}")
     @CircuitBreaker(name = "allCB", fallbackMethod = "fallbackGetAll")
+    @Retry(name = "allCB")
     public ResponseEntity<UserDto> getUserDto(@PathVariable Long id) {
         UserDto userDto = userService.getUserDto(id);
         if (userDto == null) {

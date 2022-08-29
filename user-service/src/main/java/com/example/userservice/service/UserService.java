@@ -64,6 +64,8 @@ public class UserService {
         }
         List<Car> cars = carFeignClient.getCars(id);
         List<Bike> bikes = bikeFeignClient.getBikes(id);
+        if(cars==null || bikes==null)
+            throw new RuntimeException();
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setName(user.getName());

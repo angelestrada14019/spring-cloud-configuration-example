@@ -36,3 +36,29 @@ resilience4j.circuitbreaker:
             waitDurationInOpenState: 5s
             permittedNumberOfCallsInHalfOpenState: 3
             automaticTransitionFromOpenToHalfOpenEnabled: true
+
+resilience4j.retry:
+    instances:
+        carsCB:
+            maxAttempts: 3
+            waitDuration: 1s
+            retryExceptions:
+              - org.springframework.web.client.HttpServerErrorException
+              - java.io.IOException
+              - feign.FeignException$InternalServerError
+            ignoreExceptions:
+        bikesCB:
+            maxAttempts: 3
+            waitDuration: 1s
+            retryExceptions:
+              - org.springframework.web.client.HttpServerErrorException
+              - java.io.IOException
+              - feign.FeignException$InternalServerError
+        allCB:
+          maxAttempts: 3
+          waitDuration: 1s
+          retryExceptions:
+            - org.springframework.web.client.HttpServerErrorException
+            - java.io.IOException
+            - feign.FeignException$InternalServerError
+
