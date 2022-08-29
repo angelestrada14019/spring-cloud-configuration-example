@@ -11,7 +11,7 @@ spring:
   cloud:
     gateway:
       default-filters:
-        - filter/LoggingGatewayFilterFactory
+        - LoggingGatewayFilterFactory
       discovery:
         locator:
           enabled: true
