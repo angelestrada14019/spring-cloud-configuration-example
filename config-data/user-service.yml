@@ -7,6 +7,28 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
+#actuator 
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+info:
+  name: user-service
+  description: User
+  version: 1.0.0
+  date: 2022-09-04
+
+#circuit breaker
 resilience4j.circuitbreaker:
     instances:
         carsCB:
